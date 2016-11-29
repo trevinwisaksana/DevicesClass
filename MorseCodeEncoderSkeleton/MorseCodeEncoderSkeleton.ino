@@ -49,14 +49,12 @@ void loop() {
           for (letterIndex = 0; letterIndex < sizeof( MorseCodeLetters );  letterIndex++)  
           {
   
-            if (letter == MorseCodeLetters [ letterIndex ] ) 
-            {
+            if (letter == MorseCodeLetters [ letterIndex ] ) {
               // note: a faster solution would use if statements to check the range A-Z and 0-9 and calculate the letterIndex
                   letterLength = MorseCodeLetterLengths[ letterIndex ];
                   ditsDahs     = MorseCodeLetterDitsDahs[ letterIndex ];
 
-                  for (count = 1; count <= letterLength; count++) 
-                  {
+                  for (count = 1; count <= letterLength; count++) {
                     // Shift and isolate each bit and set its to 1 if dit, and 3 if a dah
                     // If true, return a 3, if not return a 1
                     ditOrDah = (1 & (ditsDahs >> (letterLength - count))) ? 3 : 1;

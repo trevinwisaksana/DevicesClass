@@ -1,18 +1,11 @@
 // Morse code Decoder project for devices and IOT class
 // Solution coded by Shannon Bailey, 11/13/2016
-// Skeleton version created 11/14/2016
 #include <Arduino.h>
 
 double dotRate = (200) / (60);
-
-// Four times the dot rate:
-// We're sampling 4 times more because this can get a more accurate and precise measure based on the dot rate.
 double sampleRate = 1.0 / (dotRate * 4.0);
-
 #define TRAINING_LENGTH 100
 
-// This is a state machine:
-// There are three states, SILENT, ON, SPACE
 #define SILENT 0
 #define ON     1
 #define SPACE  2
@@ -67,132 +60,122 @@ void loop() {
     lastTime = millis()/1000.0;
         
     sensorValue = analogRead(sensorPin);
-    // enable for debugging
-    // Serial.print(sensorValue);  Serial.write(' ');  count++;  if (count > 10) { Serial.println(' ');  count = 0; }
+// enable for debugging
+//    Serial.print(sensorValue);  Serial.write(' ');  count++;  if (count > 10) { Serial.println(' ');  count = 0; }
 
     switch (decoderState) {
         case SILENT:
-            // check for sensorValue greater than threshold, set activeCount and change decoderState
+        // check for sensorValue greater than threshold, set activeCount and change decoderState
             if (sensorValue > thresholdValue) {
-              activeCount = 1;
-              decoderState = ON;
+                activeCount = 1;
+                decoderState = ON;
             }
             break;
         case ON:
-          // check sensorValue greater than threshdold, increment activeCount
-          if (sensorValue > thresholdValue) {
-            activeCount ++;
-          } else {
-            // else check for ActiveCount between 3 and 5 and setElement count 1 and state
-            if ((activeCount >= 3) && (activeCount <= 5)) {
-              setElement( 1, 1);
+        // check sensorValue greater than threshdold, increment activeCount
+            if (sensorValue > thresholdValue) {
+                activeCount++;
             } else {
-               // else check for ActiveCount between 11 and 13 and setElement count 3 and state
+        // else check for ActiveCount between 3 and 5 and setElement count 1 and state
+                if ((activeCount >= 3) && (activeCount <= 5) ) {
+                    setElement ( 1, 1 );
+                } else {
+                // else check for ActiveCount between 11 and 13 and setElement count 3 and state
                 // (these numbers may need slight tuning)
-                if ((activeCount >= 11) && (activeCount <= 13)) {
-                    setElement (3, 1);
+                    if ((activeCount >= 11) && (activeCount <= 13) ) {
+                        setElement  ( 3, 1 );
+                    }
                 }
-            }
              // final reset activeCount, set silentCount, change decoderState
-             activeCount = 0;
-             silentCount = 1;
-             decoderState = SPACE;
-          }
-          break;
+                activeCount = 0;
+                silentCount = 1;
+                decoderState = SPACE;
+            }
+            break;
 
         case SPACE:
         // check sensorValue less then threshold, increment silentCount
-           if (sensorValue < thresholdValue) {
-            silentCount ++;
-              // check silentCount greater than 32, reset silentCount, change decoderState, setElement count 0 and state
-              // this checks for a very long time after sending a character
-              if ((silentCount >= 32)) {
-                  silentCount = 0;
-                  setElement ( 0, 0);
-                  decoderState = SILENT;
-              }
-           } else {
-              // else check for a short space between dits and dahs, silentCount of 3 to 5, setElement count 1 and state
-              // else check for a slong space between dits and dahs, silentCount of 15 through 17, setElement count 3 and state
+            if (sensorValue < thresholdValue) {
+                silentCount++;
+            // check silentCount greater than 32, reset silentCount, change decoderState, setElement count 0 and state
+            // this checks for a very long time after sending a character
+                if (silentCount > 32) {
+                    silentCount = 0;
+                    decoderState = SILENT;
+                    setElement  ( 0, 0 );
+                }
+        // else check for a short space between dits and dahs, silentCount of 3 to 5, setElement count 1 and state
+            } else {
+                if ((silentCount >= 3) && (silentCount <= 5) ) {
+                    setElement  ( 1, 0 );
+            // else check for a slong space between dits and dahs, silentCount of 15 through 17, setElement count 3 and state
             // this indicates a space between letters/numbers
-              if ((silentCount >= 3) && (silentCount <= 5)) {
-                  setElement( 1, 0);
-              } else {
-                 if ((silentCount >= 15) && (silentCount <= 17)) {
-                    setElement( 3, 0);
-                    // else check for a very long short space between dits and dahs, silentCount of 30 through 32, setElement count 7 and state
-                    // this is a space character between letters and numbers
-                 } else {
-                    if ((silentCount >= 30) && (silentCount <= 32)) {
-                      setElement(7,0);
+                } else {
+                    if ((silentCount >= 15) && (silentCount <= 17) ) {
+                        setElement  ( 3, 0 );
+                // else check for a very long short space between dits and dahs, silentCount of 30 through 32, setElement count 7 and state
+                // this is a space character between letters and numbers
+                    } else {
+                        if ((silentCount >= 30) && (silentCount <= 32) ) {
+                            setElement  ( 7, 0 );
+                        }
                     }
-                 }
-              }
-
-              // final reset activeCount 1, silentCount 0 and change decoderState
-              // enable for debugging
-              // Serial.println(silentCount);  // enable to see actual pulse counts
-             activeCount = 1;
-             silentCount = 0;
-             decoderState = ON;
-           } 
-    
-              
-           break;
+                }
+// enable for debugging
+//                Serial.println(silentCount);  // enable to see actual pulse counts
+                activeCount = 1;
+                silentCount = 0;
+                decoderState = ON;
+            }
+            break;
     }
-     
 }
 
 void setElement (int count, int state) {
     int index;
-    // enable for debugging
-    // Serial.print("count = ");  Serial.print(count);  Serial.print(" state = ");  Serial.println(state);
-    // check state 1, increment ditDahCount, shift ditsAndDahs left 1 and OR in a 1 bit if count is 3 (a dah)
+// enable for debugging
+//    Serial.print("count = ");  Serial.print(count);  Serial.print(" state = ");  Serial.println(state);
+
+ // check state 1, increment ditDahCount, shift ditsAndDahs left 1 and OR in a 1 bit if count is 3 (a dah)    
     if (state == 1) {
-      ditDahCount ++;
-      ditsAndDahs = ((ditsAndDahs << 1) | (count == 3)); 
+        ditDahCount++;
+        ditsAndDahs = ((ditsAndDahs << 1) | (count == 3));  // shift left one, OR in Dit or Dah
+ // else state is 0, check count == 1
     } else {
-    // else state is 0, check count == 1
-        // to prevent overflow of noise, if ditDahCount > 5, reset ditsAndDahs and ditDahCount (using goto?)
         if (count == 1) {
-          if (ditDahCount > 5) {
-            goto OVERFLOW;
-          }
-        } else {
-        // else, the state is a character break space so lets lookup the character
-          for (index = 0; index < sizeof( MorseCodeLetters ); index++) {
-            if (ditDahCount == MorseCodeLetterLengths [index]) {
-              if (ditsAndDahs == MorseCodeLetterDitsDahs [index]) {
-                Serial.print(MorseCodeLetters [index]);
-                break;
-              }
+         // to prevent overflow of noise, if ditDahCount > 5, reset ditsAndDahs and ditDahCount (using goto?)
+            if (ditDahCount > 5) {
+                goto OVERFLOW;
             }
-          }
-          if ((count == 7) || (count == 0)) {
-            // append a space
-            Serial.print(' ');
-          }
-
-OVERFLOW:
-         // reset the ditsAndDahs and ditDahCount to start decoding the next letter
-         ditsAndDahs = 0;
-         ditDahCount = 0;
-      }
-    }
- 
+     // else, the state is a character break space so lets lookup the character
+        } else {
          // check all the letters and numbers
-
+            for (index = 0; index < sizeof( MorseCodeLetters ); index++) {
              // check if the ditDahCount matches
-
+                if (ditDahCount == MorseCodeLetterLengths [index]) {
                  // check the binary bit value for a match
-
+                    if (ditsAndDahs == MorseCodeLetterDitsDahs [index]) {
                      // print the matching letter/number and break out of the loop
-
-         // if the count is 7 and not 3, then append a space characte
+                        Serial.print(MorseCodeLetters [index]);
+                        break;
+                    }
+                }
+            }
+         // if the count is 7 and not 3, then append a space character
+            if ((count == 7) || (count == 0) ){
+                // append a space
+                Serial.print(' ');
+            }
+        // reset the ditsAndDahs and ditDahCount to start decoding the next letter
+OVERFLOW:
+            ditsAndDahs = 0;
+            ditDahCount = 0;
+        }
+    }
 }
 
 
-// calculate a median value for the threshold, or if no signal is seen, choose a threshold 10% above baseValue
+// calculate a median value for the threshold or if no signal is seen, choose a threshold 10% above baseValue
 void calculateThreshold (void) {
     int index, lightValue;
     int baseValue = 1023;
@@ -207,7 +190,7 @@ void calculateThreshold (void) {
         if (peakValue < lightValue ) peakValue = lightValue;
     }
     if (peakValue > baseValue + 50) { // if the peak is more than 50 above base (or about 5%) then a signal was seen
-        thresholdValue = (baseValue + peakValue) / 2; // thresholdValue is the value that we will need to know if it's on or off.
+        thresholdValue = (baseValue + peakValue) / 2;
     } else {
         thresholdValue = baseValue + 100;
     }
