@@ -9,6 +9,13 @@
  * - WA6:125 -> Writes 125 to analog output pin 6 (PWM)
  */
 
+#include <Arduino.h>
+#include <Wire.h>
+#include <SoftwareSerial.h>
+
+double angle_rad = PI/180.0; 
+double angle_deg = 180.0/PI;
+
 char operation; // Holds operation (R, W, ...)
 char mode; // Holds the mode (D, A)
 int pin_number; // Holds the pin number
@@ -16,6 +23,7 @@ int digital_value; // Holds the digital value
 int analog_value; // Holds the analog value
 int value_to_write; // Holds the value that we want to write
 int wait_for_transmission = 5; // Delay in ms in order to receive the serial data
+
 
 void set_pin_mode(int pin_number, char mode){
     /*
@@ -85,9 +93,27 @@ void setup() {
     Serial.begin(9600); // Serial Port at 9600 baud
     Serial.setTimeout(100); // Instead of the default 1000ms, in order
                             // to speed up the Serial.parseInt() 
+    pinMode(6,OUTPUT); // For LED pin 6
+    pinMode(8,OUTPUT); // For LED pin 8
+    pinMode(10,OUTPUT); // For LED pin 10
 }
 
 void loop() {
+  
+    digitalWrite(6,1);
+    _delay(6);
+    digitalWrite(6,0);
+    _delay(3);
+    digitalWrite(8,1);
+    _delay(6);
+    digitalWrite(8,0);
+    _delay(3);
+    digitalWrite(10,1);
+    _delay(6);
+    digitalWrite(10,0);
+    _delay(3);
+    _loop();
+    
     // Check if characters available in the buffer
     if (Serial.available() > 0) {
         operation = Serial.read();
@@ -126,4 +152,12 @@ void loop() {
                 break;
         }
     }
+}
+
+void _delay(float seconds){
+    long endTime = millis() + seconds * 1000;
+    while(millis() < endTime)_loop();
+}
+
+void _loop(){
 }

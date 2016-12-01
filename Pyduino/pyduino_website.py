@@ -39,6 +39,13 @@ def hello_world():
             # turn on LED on arduino
             a.digital_write(LED_PIN,1)
 
+        # if we press the Turn Green button
+        if request.form['submit'] == 'Turn Green':
+            print 'TURN GREEN'
+
+            # turn on LED that is Green
+            a.digital_write(LED_PIN, 1)
+
         # if we press the turn off button
         elif request.form['submit'] == 'Turn Off':
             print 'TURN OFF'
