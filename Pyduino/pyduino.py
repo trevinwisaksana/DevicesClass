@@ -51,6 +51,8 @@ class Arduino():
             str(digital_value)))).encode()
         self.conn.write(command)
 
+        #  '!' ,str(is_normal)
+
     def analog_read(self, pin_number):
         """
         Performs an analog read on pin_number and returns the value (0 to 1023)
@@ -74,6 +76,12 @@ class Arduino():
             str(analog_value)))).encode()
         self.conn.write(command)
 
+    def is_normal(self, mode):
+        """
+        Changes the mode of the arduino to accept the all Green light.
+        """
+        command = (''.join('WD'), mode).encode()
+        self.conn.write(command)
 
     def close(self):
         """

@@ -15,7 +15,7 @@
 
 double angle_rad = PI/180.0; 
 double angle_deg = 180.0/PI;
-
+bool normal_mode = true;
 char operation; // Holds operation (R, W, ...)
 char mode; // Holds the mode (D, A)
 int pin_number; // Holds the pin number
@@ -99,20 +99,22 @@ void setup() {
 }
 
 void loop() {
-  
-    digitalWrite(6,1);
-    _delay(6);
-    digitalWrite(6,0);
-    _delay(3);
-    digitalWrite(8,1);
-    _delay(6);
-    digitalWrite(8,0);
-    _delay(3);
-    digitalWrite(10,1);
-    _delay(6);
-    digitalWrite(10,0);
-    _delay(3);
-    _loop();
+
+    if (normal_mode == true) {
+      digitalWrite(6,1);
+      _delay(6);
+      digitalWrite(6,0);
+      _delay(3);
+      digitalWrite(8,1);
+      _delay(6);
+      digitalWrite(8,0);
+      _delay(3);
+      digitalWrite(10,1);
+      _delay(6);
+      digitalWrite(10,0);
+      _delay(3);
+      _loop();
+    } 
     
     // Check if characters available in the buffer
     if (Serial.available() > 0) {
@@ -122,6 +124,8 @@ void loop() {
         pin_number = Serial.parseInt(); // Waits for an int to be transmitted
         if (Serial.read()==':'){
             value_to_write = Serial.parseInt(); // Collects the value to be written
+        } else if (Serial.read()=='!'){
+          // is_normal = Serial.
         }
         switch (operation){
             case 'R': // Read operation, e.g. RD12, RA4
@@ -129,6 +133,8 @@ void loop() {
                     digital_read(pin_number);
                 } else if (mode == 'A'){ // Analog read
                     analog_read(pin_number);
+                // } else if (mode == 'N'){ // Not normal mode
+                //  normal_mode = False
         } else {
           break; // Unexpected mode
         }
@@ -139,6 +145,8 @@ void loop() {
                     digital_write(pin_number, value_to_write);
                 } else if (mode == 'A'){ // Analog write
                     analog_write(pin_number, value_to_write);
+                // } else if (mode == 'G'){ // Digital write to make light Green only
+                     // digital_write(pin_number, value_to_write); 
                 } else {
                     break; // Unexpected mode
                 }
@@ -156,7 +164,9 @@ void loop() {
 
 void _delay(float seconds){
     long endTime = millis() + seconds * 1000;
+    if (normal_mode == true) {
     while(millis() < endTime)_loop();
+    }
 }
 
 void _loop(){

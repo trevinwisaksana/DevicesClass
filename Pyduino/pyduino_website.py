@@ -11,14 +11,15 @@ a = Arduino()
 time.sleep(3)
 
 # declare the pins we're using
-LED_PIN = 10
-ANALOG_PIN = 0
+LED_PIN_GREEN = 6
+LED_PIN_BLUE = 8
+LED_PIN_RED = 10
+# ANALOG_PIN = 0
 
 # initialize the digital pin as output
-a.set_pin_mode(LED_PIN,'O')
+# a.set_pin_mode(LED_PIN,'O')
 
 print 'Arduino initialized'
-
 
 # we are able to make 2 different requests on our webpage
 # GET = we just type in the url
@@ -27,7 +28,7 @@ print 'Arduino initialized'
 def hello_world():
 
     # variables for template page (templates/index.html)
-    author = "Kyle"
+    author = "Harambe"
 
     # if we make a post request on the webpage aka press button then do stuff
     if request.method == 'POST':
@@ -44,14 +45,19 @@ def hello_world():
             print 'TURN GREEN'
 
             # turn on LED that is Green
-            a.digital_write(LED_PIN, 1)
+            a.digital_write(LED_PIN_GREEN, 1)
+            a.digital_write(LED_PIN_RED, 0)
+            a.digital_write(LED_PIN_BLUE, 0)
+            a.normal("False")
 
         # if we press the turn off button
         elif request.form['submit'] == 'Turn Off':
             print 'TURN OFF'
 
             # turn off LED on arduino
-            a.digital_write(LED_PIN,0)
+            a.digital_write(LED_PIN_GREEN, 0)
+            a.digital_write(LED_PIN_RED, 0)
+            a.digital_write(LED_PIN_BLUE, 0)
 
         else:
             pass
