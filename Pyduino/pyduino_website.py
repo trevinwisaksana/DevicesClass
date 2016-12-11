@@ -14,7 +14,7 @@ time.sleep(3)
 LED_PIN_GREEN = 6
 LED_PIN_BLUE = 8
 LED_PIN_RED = 10
-# ANALOG_PIN = 0
+ANALOG_PIN = 0
 
 # initialize the digital pin as output
 # a.set_pin_mode(LED_PIN,'O')
@@ -38,17 +38,20 @@ def hello_world():
             print 'TURN ON'
 
             # turn on LED on arduino
-            a.digital_write(LED_PIN,1)
+            a.is_normal()
 
         # if we press the Turn Green button
-        if request.form['submit'] == 'Turn Green':
-            print 'TURN GREEN'
+        if request.form['submit'] == 'Emergency Mode':
+            print 'Emergency mode'
 
             # turn on LED that is Green
-            a.digital_write(LED_PIN_GREEN, 1)
-            a.digital_write(LED_PIN_RED, 0)
-            a.digital_write(LED_PIN_BLUE, 0)
-            a.normal("False")
+            a.emergency_mode()
+
+        if request.form['submit'] == 'Normal Mode':
+            print 'Normal mode'
+
+            # Turn LED's to work normally
+            a.is_normal()
 
         # if we press the turn off button
         elif request.form['submit'] == 'Turn Off':
@@ -63,10 +66,12 @@ def hello_world():
             pass
 
     # read in analog value from photoresistor
-    readval = a.analog_read(ANALOG_PIN)
+    time.sleep(1)
+    # readval = a.analog_read(ANALOG_PIN)
 
     # the default page to display will be our template with our template variables
-    return render_template('index.html', author=author, value=100*(readval/1023.))
+    '''value=100*(readval/1023.)'''
+    return render_template('index.html', author=author, value = 0)
 
 
 # unsecure API urls

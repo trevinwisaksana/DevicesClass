@@ -76,11 +76,15 @@ class Arduino():
             str(analog_value)))).encode()
         self.conn.write(command)
 
-    def is_normal(self, mode):
+    def is_normal(self):
         """
         Changes the mode of the arduino to accept the all Green light.
         """
-        command = (''.join('WD'), mode).encode()
+        command = ("N").encode()
+        self.conn.write(command)
+
+    def emergency_mode(self):
+        command = ("E").encode()
         self.conn.write(command)
 
     def close(self):
