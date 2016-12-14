@@ -10,50 +10,76 @@
 #include <Servo.h>
 
 
-Servo firstServo;  // create servo object to control a servo
-Servo secondServo; // create second servo object to control a servo
-// twelve servo objects can be created on most boards
+Servo servoX;  // Create servo object to control a servo
+Servo servoY; // Create second servo object to control a second servo
 
-int pos = 0;    // variable to store the servo position
+int XPos = 1;  // Variable to store the servo position
+int YPos = 1;
+int traverseForce = 2;
 
 void setup() {
 
   Serial.begin(115200); // Connected to the joystick
   
-  firstServo.attach(3);  // attaches the servo on pin 3 to the servo object
-  secondServo.attach(4);  // attaches the servo on pin 4 to the servo object
+  servoX.attach(3);  // Attaches the servo on pin 3 to the servo object
+  servoY.attach(4);  // Attaches the servo on pin 4 to the servo object
 }
 
 void loop() {
+    int sensorValueX = analogRead(A0);
+    int sensorValueY = analogRead(A1);
 
-    int sensorValue1 = (analogRead(A0) - 240) / 4;
-    int sensorValue2 = (analogRead(A1) - 240) / 4;
-    
-    // Tells the servo to move based on the joystick input
-    firstServo.write(sensorValue1);              
-    secondServo.write(sensorValue2);
-                     
-    /* firstServo.write(pos);              
-    secondServo.write(pos); */
+    // For the X Axis 
+    if (sensorValueX > 509) {
+        if (XPos < 0) {
+          XPos = 0;
+        }
+        if (XPos > 180) {
+          XPos = 180;
+        }
+        XPos += traverseForce;
+        servoX.write(XPos); // Tells servo to go to position in variable 'pos' 
+        Serial.println(XPos);
+    }
 
-    /* Serial.print("The X and Y coordinate is:");
-    Serial.print(sensorValue1, DEC);
-    Serial.print(",");
-    Serial.println(sensorValue2, DEC);
-    Serial.println(" "); 
-    delay(200); */
-  
-  /* for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    firstServo.write(pos);              // tell servo to go to position in variable 'pos'
-    secondServo.write(pos);
-    delay(15);                       // waits 15ms for the servo to reach the position
-  }
-  for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-    firstServo.write(pos);              // tell servo to go to position in variable 'pos'
-    secondServo.write(pos);
-    delay(15);                       // waits 15ms for the servo to reach the position
+    if (sensorValueX < 509 && sensorValueX <= 766) {
+        if (XPos < 0) {
+          XPos = 0;
+        }
+        if (XPos > 180) {
+          XPos = 180;
+        }
+        XPos -= traverseForce;
+        servoX.write(XPos); // Tells servo to go to position in variable 'pos' 
+        Serial.println(XPos);
+    }
     
-  } */
-  
+    // For the Y Axis
+    if (sensorValueY > 508 && sensorValueY <= 761) {
+        if (YPos < 0) {
+          YPos = 0;
+        }
+        if (YPos > 180) {
+          YPos = 180;
+        }
+        YPos += traverseForce;     
+        servoY.write(YPos); // Tells servo to go to position in variable 'pos' 
+        Serial.println(YPos);
+    }
+
+    if (sensorValueY < 508 && sensorValueY <= 761) {  
+        if (YPos < 0) {
+          YPos = 0;
+        }
+        if (YPos > 180) {
+          YPos = 180;
+        }
+        YPos -= traverseForce; 
+        servoY.write(YPos); // Tells servo to go to position in variable 'pos'
+        Serial.println(YPos); 
+    }  
+
+    delay(10);
 }
+
+
