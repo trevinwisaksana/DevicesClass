@@ -82,7 +82,11 @@ void loop() {
         Serial.println(YPos); 
     }  
 
-    delay(1);
+    delay(0.1);
+
+    if (sensorValueX == 1023) {
+      
+    }
 }
 
 
