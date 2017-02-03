@@ -8,7 +8,8 @@ class Arduino():
     Models an Arduino connection
     """
 
-    def __init__(self, serial_port='/dev/tty.usbmodem1411', baud_rate=9600, read_timeout=5):
+    def __init__(self, serial_port='/dev/tty.usbmodem1411', baud_rate=9600,
+            read_timeout=5):
         """
         Initializes the serial connection to the Arduino board
         """
@@ -23,8 +24,8 @@ class Arduino():
         - O for OUTPUT
         - P for INPUT_PULLUP MO13
         """
-        command = (''.join(('M',mode,str(pin_number)))).encode()
-        #print 'set_pin_mode =',command,(''.join(('M',mode,str(pin_number))))
+        command = (''.join(('M', mode, str(pin_number)))).encode()
+        # print 'set_pin_mode =',command,(''.join(('M',mode,str(pin_number))))
         self.conn.write(command)
 
     def digital_read(self, pin_number):
@@ -36,7 +37,7 @@ class Arduino():
         self.conn.write(command)
         line_received = self.conn.readline().decode().strip()
         header, value = line_received.split(':') # e.g. D13:1
-        if header == ('D'+ str(pin_number)):
+        if header == ('D' + str(pin_number)):
             # If header matches
             return int(value)
 
@@ -78,12 +79,12 @@ class Arduino():
 
     # Used for the loading state
     def loading_mode(self):
-        command = ('L').encode()
+        command = ("L").encode()
         self.conn.write(command)
 
     # Used for unloading state
     def unloading_mode(self):
-        command = ('U').encode()
+        command = ("U").encode()
         self.conn.write(command)
 
     def close(self):
